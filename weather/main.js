@@ -16,20 +16,19 @@ var apiRequest;
 document.onreadystatechange = function () {
     if (document.readyState == "interactive") {
         // Initialize your application or run some code.
-        start();
+        weatherButton.onclick = getWeather;
     }
 };
 
-function start() {
-  weatherButton.onclick = getWeather;
-}
-
-// Fetch weather data from API endpoint when user clicks 
+// Fetch weather data from API endpoint when user clicks
 // the submit button
 function getWeather() {
   var url = "http://api.openweathermap.org/data/2.5/weather?zip=<zipCode>&us&appid=ef6a94dab254dc386b931af4d5ca58c7";
   url = url.replace("<zipCode>",zipInput.value );
-  console.log(url);
+
+  // ES6 syntax
+  // let url = `http://api.openweathermap.org/data/2.5/weather?zip=${zipInput.value}&us&appid=ef6a94dab254dc386b931af4d5ca58c7`
+
   apiRequest = new XMLHttpRequest();
   apiRequest.onload = catchResponse;
   apiRequest.onerror = httpRequestOnError;
@@ -44,11 +43,9 @@ function httpRequestOnError() {
 
 // Catches the response and determines status
 function catchResponse() {
-  console.log(apiRequest.statusText);
-  if (apiRequest.statusText == "OK") {
+  if (apiRequest.statusText === "OK") {
     parseResponse(JSON.parse(this.responseText));
   } else {
-    console.dir(this.responseText);
     errorMessage.innerHTML = JSON.parse(this.responseText).message;
     error.style.display = 'block';
     output.style.display = 'none';
@@ -57,15 +54,13 @@ function catchResponse() {
 
 // Parses JSON object
 function parseResponse(results) {
-  console.log(results);
   var city = results.name;
   var tempK = results.main.temp;
   var tempF = kelvinToFahrenheit(tempK);
   var tempC = kelvinToCelsius(tempK);
   var conditions = results.weather[0].description;
   displayWeather(city, tempK, tempF, tempC, conditions); //Calls display func
-  displayImage(tempF); 
-  console.log(tempC);
+  displayImage(tempF);
 
   error.style.display = 'none';
   output.style.display = 'block';
@@ -92,7 +87,7 @@ function displayWeather(city, tempK, tempF, tempC, conditions) {
   temperatureOutputK.innerHTML = tempK + 'K';
   temperatureOutputF.innerHTML = tempF + 'F';
   temperatureOutputC.innerHTML = tempC + 'C';
-   conditionOutput.innerHTML = conditions;
+  conditionOutput.innerHTML = conditions;
 }
 
 // Select an image to display based on temperature
